@@ -86,11 +86,11 @@ def run_recon(domain: str, out_dir: str, proxy=None, dry_run=False):
     print(f"\n[INFO] Starting recon for: {domain}")
 
     # File paths
-    subfinder_out = f"{out_dir}/{domain}_subfinder.txt"
-    dnsx_out      = f"{out_dir}/{domain}_dnsx.txt"
-    naabu_out     = f"{out_dir}/{domain}_naabu.txt"
-    httpx_out     = f"{out_dir}/{domain}_httpx.txt"
-    katana_out    = f"{out_dir}/{domain}_katana.txt"
+    subfinder_out = f"{out_dir}/{domain}/subfinder.txt"
+    dnsx_out      = f"{out_dir}/{domain}/dnsx.txt"
+    naabu_out     = f"{out_dir}/{domain}/naabu.txt"
+    httpx_out     = f"{out_dir}/{domain}/httpx.txt"
+    katana_out    = f"{out_dir}/{domain}/katana.txt"
 
     # 1. subfinder
     run_subfinder(domain, subfinder_out, dry_run)

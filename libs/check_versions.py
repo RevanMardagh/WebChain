@@ -1,5 +1,7 @@
+# check_versions.py
 import subprocess
 import re
+from utils import Colors, colorize
 
 def run_pdtm() -> str:
     """Runs the pdtm command and returns raw output."""
@@ -48,30 +50,22 @@ def parse_pdtm_output(output: str):
 
     return tools
 
-# ANSI color codes
-class Colors:
-    OK = "\033[92m"        # green
-    OUTDATED = "\033[93m"  # yellow
-    MISSING = "\033[91m"   # red
-    SKIP = "\033[90m"      # gray
-    RESET = "\033[0m"      # reset
-
 # Only show these tools
 CORE_TOOLS = {"subfinder", "dnsx", "naabu", "httpx", "katana"}
 
 def check_projectdiscovery_tools():
     output = run_pdtm()
     if output is None:
-        print(f"{Colors.MISSING}[ERR]{Colors.RESET} pdtm is not installed or not found in PATH.")
+        print(f"{colorize('[ERR]', Colors.ERROR)} pdtm is not installed or not found in PATH.")
         return None
 
     tools = parse_pdtm_output(output)
 
-    print("\n=== ProjectDiscovery Tools Status ===")
-    for tool in CORE_TOOLS:
+    print("\n" + colorize("=== ProjectDiscovery Tools Status ===", Colors.HEADER))
+    for tool in sorted(CORE_TOOLS):
         info = tools.get(tool)
         if not info:
-            print(f"{Colors.MISSING}[MISSING]{Colors.RESET} {tool}: not installed or not detected")
+            print(f"{colorize('[MISSING]', Colors.ERROR)} {tool}: not installed or not detected")
             continue
 
         status = info["status"]
@@ -79,13 +73,13 @@ def check_projectdiscovery_tools():
         latest = info["latest_version"]
 
         if status == "latest":
-            print(f"{Colors.OK}[OK]{Colors.RESET} {tool}: up-to-date ({current})")
+            print(f"{colorize('[OK]', Colors.OK)} {tool}: up-to-date ({current})")
         elif status == "outdated":
-            print(f"{Colors.OUTDATED}[OUTDATED]{Colors.RESET} {tool}: {current} → {latest}")
+            print(f"{colorize('[OUTDATED]', Colors.WARN)} {tool}: {current} → {latest}")
         elif status == "not installed":
-            print(f"{Colors.MISSING}[MISSING]{Colors.RESET} {tool}: not installed")
+            print(f"{colorize('[MISSING]', Colors.ERROR)} {tool}: not installed")
         elif status == "not supported":
-            print(f"{Colors.SKIP}[SKIP]{Colors.RESET} {tool}: not supported by pdtm")
+            print(f"{colorize('[SKIP]', Colors.MUTED)} {tool}: not supported by pdtm")
 
     return tools
 
