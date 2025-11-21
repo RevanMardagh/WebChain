@@ -20,17 +20,19 @@ def parse_pdtm_output(output: str):
 
     tools = {}
 
+    # Remove ANSI escape codes
     clean_output = ansi_escape.sub("", output)
     clean_output = clean_output.replace("\r\n", "\n").replace("\r", "\n")
 
+    # Only keep lines that start with a number followed by a dot
     lines = [line for line in clean_output.splitlines() if re.match(r"^\s*\d+\.", line)]
     trimmed_output = "\n".join(lines)
 
     pattern = re.compile(
-        r"^\s*\d+\.\s+([a-zA-Z0-9\-_]+)\s+"           
-        r"\((latest|outdated|not installed|not supported)\)"  
-        r"(?:\s+\(([\d\.]+)\))?"                       
-        r"(?:\s+➡\s+\(([\d\.]+)\))?",
+        r"^\s*\d+\.\s+([a-zA-Z0-9\-_]+)\s+"           # tool name
+        r"\((latest|outdated|not installed|not supported)\)"  # status
+        r"(?:\s+\(([\d\.]+)\))?"                       # current version (optional)
+        r"(?:\s+➡\s+\(([\d\.]+)\))?",                  # latest version if outdated (optional)
         re.MULTILINE
     )
 
@@ -71,6 +73,7 @@ def check_projectdiscovery_tools():
     for tool in CORE_TOOLS:
         info = tools.get(tool)
         if not info:
+            # If tool is completely missing from output
             print(f"{Colors.MISSING}[MISSING]{Colors.RESET} {tool}: not installed or not detected")
             continue
 

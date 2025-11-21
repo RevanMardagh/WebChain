@@ -3,7 +3,12 @@ from check_versions import check_projectdiscovery_tools
 
 REQUIRED_TOOLS = ["subfinder", "dnsx", "naabu", "httpx", "katana"]
 
+
 def install_tool(tool_name: str, dry_run: bool = False):
+    """
+    Install a ProjectDiscovery tool.
+    Supports dry-run mode which prints the command instead of running it.
+    """
     if tool_name == "naabu":
         cmd = ["sudo", "apt", "install", "naabu", "-y"]
     else:
@@ -20,7 +25,12 @@ def install_tool(tool_name: str, dry_run: bool = False):
     except subprocess.CalledProcessError:
         print(f"[ERROR] Failed to install {tool_name}.")
 
+
 def prompt_and_install(tools: dict, dry_run: bool = False):
+    """
+    Prompt user to install/update ONLY required tools.
+    Respects dry-run mode.
+    """
     tools_to_install = []
 
     for tool in REQUIRED_TOOLS:
@@ -61,5 +71,8 @@ def prompt_and_install(tools: dict, dry_run: bool = False):
 
 if __name__ == "__main__":
     tools = check_projectdiscovery_tools()
-    dry_run = True  # Example dry-run
+
+    # Example: enable dry-run mode
+    dry_run = True
+
     prompt_and_install(tools, dry_run=dry_run)
