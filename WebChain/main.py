@@ -1,4 +1,3 @@
-# __main__.py
 from input_parser import parse_arguments
 from check_versions import check_projectdiscovery_tools
 from install_dependencies import prompt_and_install
