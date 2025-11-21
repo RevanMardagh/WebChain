@@ -15,6 +15,13 @@ def parse_arguments():
                         help="BurpSuite proxy address (default when empty: 127.0.0.1:8080)")
     parser.add_argument("--dry-run", action="store_true", help="Show commands without executing them")
 
+    parser.add_argument(
+        "-ai",
+        "--ai_overview",
+        action="store_true",
+        help="Send discovered URLs to Google Gemini for analysis"
+    )
+
     args = parser.parse_args()
 
     if not args.domain and not args.input_file:

@@ -2,6 +2,7 @@
 from utils import run_command, colorize, Colors
 import os
 from collections import defaultdict
+# from ai_overview import generate_ai_overview
 
 # Helper to pretty header
 def header(title: str):
@@ -29,6 +30,7 @@ def safe_read_lines(path: str):
     with open(path, "r", encoding="utf-8", errors="ignore") as f:
         return [l.strip() for l in f if l.strip()]
 
+
 def run_subfinder(domain: str, output: str, dry_run=False):
     header("subfinder (discovering subdomains)")
     cmd = ["subfinder", "-silent", "-d", domain, "-o", output]
@@ -36,12 +38,22 @@ def run_subfinder(domain: str, output: str, dry_run=False):
     # If stdout empty (non-dry), try reading the output file for live lines
     if not stdout and not dry_run:
         stdout = "\n".join(safe_read_lines(output))
+
+    # --- Ensure root domain is included ---
+    subs = safe_read_lines(output)
+    if domain not in subs:
+        subs.append(domain)
+        with open(output, "w") as f:
+            f.write("\n".join(subs))
+        if not dry_run:
+            stdout += f"\n{domain}"
+
     print_sample_output(stdout)
     # summary
-    subs = safe_read_lines(output)
     print(colorize(f"\n✔ subfinder completed", Colors.OK))
     print(f"   • Domains discovered: {len(subs)}")
     print(f"   • Output saved: {output}")
+
 
 def run_dnsx(input_file: str, output: str, dry_run=False):
     header("dnsx (resolving subdomains)")
@@ -78,7 +90,7 @@ def run_naabu(input_file: str, output: str, dry_run=False):
 
 def run_httpx(input_file: str, output: str, proxy=None, dry_run=False):
     header("httpx (probing web services)")
-    cmd = ["httpx", "-silent", "-l", input_file, "-o", output]
+    cmd = ["/home/kali/.pdtm/go/bin/httpx", "-silent", "-list", input_file, "-o", output]
     if proxy:
         cmd += ["-proxy", f"http://{proxy}"]
     stdout = run_command(cmd, dry_run=dry_run)

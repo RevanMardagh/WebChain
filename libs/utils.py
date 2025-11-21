@@ -29,6 +29,7 @@ def run_command(cmd: List[str], dry_run: bool = False) -> str:
     print(colorize(f"[INFO] Executing: {cmd_str}", Colors.INFO))
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        # print(result)
         return result.stdout
     except subprocess.CalledProcessError as e:
         # If a tool writes to stderr, include it in output for visibility
